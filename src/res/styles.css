@@ -1,0 +1,113 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, Verdana;
+    color: #484849;
+    background: linear-gradient(180deg, #DDDBD1, #D2DBDC);
+    font-size: 1.2rem;
+}
+
+header {
+    background: #128C7E;
+    color: #FFFFFF;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+main {
+    width: 80%;
+    margin: 1rem auto;
+    display: flex;
+    box-shadow: 0 17px 50px 0 rgba(0,0,0,.19),0 12px 15px 0 rgba(0,0,0,.24);
+    background: #FFFFFF;
+    border: 1px solid #D8D8D8;
+    border-radius: 3px;
+    height: 89vh;
+}
+
+header h1 {
+    margin: 0;
+    font-weight: normal;
+    font-size: 1.7rem;
+}
+
+@media only screen and (max-width: 1600px) {
+    main {
+        width: 90%;
+    }
+}
+
+/* List of chat partners */
+.chats-list {
+    flex-basis: 25%;
+    flex-grow: 1;
+    overflow: auto;
+    scrollbar-color: #CCCCCC #FFFFFF;
+    scrollbar-width: thin;
+}
+
+.chat-partner a, .chat-partner a:visited {
+    color: #484849;
+    text-decoration: none;
+    display: block;
+    padding: 15px 25px;
+    border-bottom: 1px solid #D8D8D8;
+}
+
+.chat-partner a:hover, .chat-partner a:active, .chat-partner a.active-chatpartner {
+    background: #EAEAEA;
+}
+
+.chat-partner-subtitle {
+    font-size: 12px;
+    margin-top: 10px;
+    color: #666666;
+}
+
+/* Chat */
+.chat {
+    flex-basis: 0;
+    flex-grow: 999;
+    flex-direction: column;
+    padding: 15px;
+    font-size: 15px;
+    display: none;
+    overflow: auto;
+    background: #ECE5DD;
+    scrollbar-color: #CCCCCC #ECE5DD;
+    scrollbar-width: thin;
+}
+
+.chat::after {
+    flex: 0 0 10px;
+    content: "";
+}
+
+.active-chat {
+    display: flex;
+}
+
+.message {
+    align-self: flex-start;
+    max-width: 50%;
+    margin-bottom: 10px;
+    padding: 6px 12px;
+    background: #FFFFFF;
+    border-radius: 5px;
+    word-wrap: break-word;
+}
+
+.message.sent {
+    align-self: flex-end;
+    background: #DCF8C6;
+}
+
+.message .time {
+    font-size: 12px;
+    color: #666666;
+    text-align: right;
+    margin-top: 4px;
+}
