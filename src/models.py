@@ -2,13 +2,15 @@ import time
 
 
 class Message:
-    def __init__(self, received_timestamp, key_from_me, data, media_caption, media_wa_type):
+    def __init__(self, received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, sender):
         self.received_timestamp = received_timestamp
+        self.remote_resource = remote_resource
         self.key_from_me = key_from_me
         self.data = data
         self.media_caption = media_caption
         self.media_wa_type = media_wa_type
         self.received_timestamp_str = Message.__timestamp_to_str(received_timestamp)
+        self.sender = sender
 
     @staticmethod
     def __timestamp_to_str(timestamp: str) -> str:
@@ -27,6 +29,14 @@ class Message:
             return f"[AUDIO] {media_caption}"
         elif self.media_wa_type == '3':
             return f"[VIDEO] {media_caption}"
+
+    def get_sender_name(self) -> str:
+        if self.sender:
+            return self.sender
+        elif self.remote_resource:
+            return self.remote_resource.split("@")[0]
+        else:
+            return self.remote_resource
 
     def __str__(self):
         if self.key_from_me:

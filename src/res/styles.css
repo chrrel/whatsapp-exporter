@@ -111,3 +111,8 @@ header h1 {
     text-align: right;
     margin-top: 4px;
 }
+
+.message .sender {
+    font-weight: bold;
+    margin-bottom: 2px;
+}

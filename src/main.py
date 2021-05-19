@@ -6,14 +6,19 @@ import exporter
 from models import Message, Chat
 
 
-def query_messages(con: Connection, key_remote_jid: str) -> list:
+def query_messages(con: Connection, key_remote_jid: str, contacts: dict) -> list:
     cur = con.cursor()
     query = """
-            SELECT received_timestamp, key_from_me, data, media_caption, media_wa_type 
+            SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
             FROM messages 
             WHERE key_remote_jid =:key_remote_jid
             ORDER BY received_timestamp"""
-    messages = [Message(row[0], row[1], row[2], row[3], row[4]) for row in cur.execute(query, {"key_remote_jid": key_remote_jid})]
+
+    messages = []
+    for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
+        messages.append(
+            Message(received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, contacts.get(remote_resource, None))
+        )
     return messages
 
 
@@ -24,7 +29,7 @@ def query_all_chats(db_path: str, contacts: dict) -> list:
     query = "SELECT key_remote_jid, subject, sort_timestamp FROM chat_list ORDER BY sort_timestamp DESC"
     for key_remote_jid, subject, sort_timestamp in cur.execute(query):
         chats.append(
-            Chat(key_remote_jid, subject, sort_timestamp, contacts.get(key_remote_jid, None), query_messages(con, key_remote_jid))
+            Chat(key_remote_jid, subject, sort_timestamp, contacts.get(key_remote_jid, None), query_messages(con, key_remote_jid, contacts))
         )
     con.close()
     return chats
