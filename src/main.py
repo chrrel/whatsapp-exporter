@@ -13,7 +13,7 @@ def query_messages(con: Connection, key_remote_jid: str, contacts: Dict[str, Opt
             SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
             FROM messages 
             WHERE key_remote_jid =:key_remote_jid
-            ORDER BY received_timestamp"""
+            ORDER BY max(receipt_server_timestamp, received_timestamp)"""
 
     messages = []
     for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
