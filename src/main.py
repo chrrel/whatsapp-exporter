@@ -1,12 +1,13 @@
 import configparser
 import sqlite3
 from sqlite3 import Connection
+from typing import List, Optional, Dict
 
 import exporter
 from models import Message, Chat
 
 
-def query_messages(con: Connection, key_remote_jid: str, contacts: dict) -> list:
+def query_messages(con: Connection, key_remote_jid: str, contacts: Dict[str, Optional[str]]) -> List[Message]:
     cur = con.cursor()
     query = """
             SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
@@ -22,7 +23,7 @@ def query_messages(con: Connection, key_remote_jid: str, contacts: dict) -> list
     return messages
 
 
-def query_all_chats(db_path: str, contacts: dict) -> list:
+def query_all_chats(db_path: str, contacts: Dict[str, Optional[str]]) -> List[Chat]:
     chats = []
     con = sqlite3.connect(db_path)
     cur = con.cursor()
@@ -35,7 +36,7 @@ def query_all_chats(db_path: str, contacts: dict) -> list:
     return chats
 
 
-def query_contacts(db_path: str) -> dict:
+def query_contacts(db_path: str) -> Dict[str, Optional[str]]:
     contacts = {}
     con = sqlite3.connect(db_path)
     cur = con.cursor()
