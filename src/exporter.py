@@ -17,6 +17,8 @@ def chats_to_html(chats: list, filepath: str):
         messages = "".join([_message_to_html(m) for m in chat.messages])
         chat_contents += f"<div class='chat' data-chatid='{_esc(chat.key_remote_jid)}'>{messages}</div>"
         preview = "None"
+        if len(chat.messages) == 0:
+            continue
         if chat.messages[-1].data is not None:
             preview = chat.messages[-1].data[0:55]
         chats_list += f"<div class='chat-partner'><a href='#{_esc(chat.key_remote_jid)}' title='{_esc(chat.phone_number)}'>" \
