@@ -57,5 +57,5 @@ def _save_to_html_file(chat_contents: str, chats_list: str, filepath: str):
     template = _load_file_content('res/template.html').replace("\n", "")
     html_output = f"{template}".format(**locals())
 
-    with open(filepath, "w") as file:
+    with open(filepath, "w", encoding="utf-8") as file:
         file.write(html_output)
