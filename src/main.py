@@ -1,18 +1,19 @@
 import configparser
 import sqlite3
 from sqlite3 import Connection
+from typing import List, Optional, Dict
 
 import exporter
 from models import Message, Chat
 
 
-def query_messages(con: Connection, key_remote_jid: str, contacts: dict) -> list:
+def query_messages(con: Connection, key_remote_jid: str, contacts: Dict[str, Optional[str]]) -> List[Message]:
     cur = con.cursor()
     query = """
             SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
             FROM messages 
             WHERE key_remote_jid =:key_remote_jid
-            ORDER BY received_timestamp"""
+            ORDER BY max(receipt_server_timestamp, received_timestamp)"""
 
     messages = []
     for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
@@ -22,11 +23,11 @@ def query_messages(con: Connection, key_remote_jid: str, contacts: dict) -> list
     return messages
 
 
-def query_all_chats(db_path: str, contacts: dict) -> list:
+def query_all_chats(db_path: str, contacts: Dict[str, Optional[str]]) -> List[Chat]:
     chats = []
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    query = "SELECT key_remote_jid, subject, sort_timestamp FROM chat_list ORDER BY sort_timestamp DESC"
+    query = "SELECT raw_string_jid as key_remote_jid, subject, sort_timestamp FROM chat_view ORDER BY sort_timestamp DESC"
     for key_remote_jid, subject, sort_timestamp in cur.execute(query):
         chats.append(
             Chat(key_remote_jid, subject, sort_timestamp, contacts.get(key_remote_jid, None), query_messages(con, key_remote_jid, contacts))
@@ -35,7 +36,7 @@ def query_all_chats(db_path: str, contacts: dict) -> list:
     return chats
 
 
-def query_contacts(db_path: str) -> dict:
+def query_contacts(db_path: str) -> Dict[str, Optional[str]]:
     contacts = {}
     con = sqlite3.connect(db_path)
     cur = con.cursor()
