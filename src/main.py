@@ -27,7 +27,7 @@ def query_all_chats(db_path: str, contacts: Dict[str, Optional[str]]) -> List[Ch
     chats = []
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    query = "SELECT raw_string_jid as key_remote_jid, subject, sort_timestamp FROM chat_view ORDER BY sort_timestamp DESC"
+    query = "SELECT raw_string_jid as key_remote_jid, subject, sort_timestamp FROM chat_view WHERE sort_timestamp IS NOT NULL ORDER BY sort_timestamp DESC"
     for key_remote_jid, subject, sort_timestamp in cur.execute(query):
         chats.append(
             Chat(key_remote_jid, subject, sort_timestamp, contacts.get(key_remote_jid, None), query_messages(con, key_remote_jid, contacts))
