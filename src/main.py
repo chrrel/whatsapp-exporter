@@ -40,8 +40,11 @@ def query_contacts(db_path: str) -> Dict[str, Optional[str]]:
     contacts = {}
     con = sqlite3.connect(db_path)
     cur = con.cursor()
-    for jid, wa_name in cur.execute("SELECT jid, wa_name from wa_contacts"):
-        contacts[jid] = wa_name
+    for jid, wa_name, display_name in cur.execute("SELECT jid, wa_name, display_name from wa_contacts"):
+        if display_name:
+            contacts[jid] = display_name
+        elif wa_name:
+            contacts[jid] = wa_name
     con.close()
     return contacts
 
