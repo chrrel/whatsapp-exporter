@@ -18,17 +18,27 @@ class Message:
         return time.strftime('%d.%m.%Y %H:%M', time.localtime(ts))
 
     def get_content(self) -> str:
-        if self.media_wa_type == '0':
+        if self.media_wa_type == 0:
             return self.data
         media_caption = self.media_caption
         if self.media_caption is None:
             media_caption = ""
-        if self.media_wa_type == '1':
+        if self.media_wa_type == 1:
             return f"[IMAGE] {media_caption}"
-        elif self.media_wa_type == '2':
+        elif self.media_wa_type == 2:
             return f"[AUDIO] {media_caption}"
-        elif self.media_wa_type == '3':
+        elif self.media_wa_type == 3:
             return f"[VIDEO] {media_caption}"
+        elif self.media_wa_type == 5:
+            return f"[Location] {media_caption}"
+        elif self.media_wa_type == 7:
+            return f"[System Message] {media_caption}"
+        elif self.media_wa_type == 9:
+            return f"[Document] {media_caption}"
+        elif self.media_wa_type == 16:
+            return f"[Live Location] {media_caption}"
+        else:
+            return self.data
 
     def get_sender_name(self) -> str:
         if self.sender:
