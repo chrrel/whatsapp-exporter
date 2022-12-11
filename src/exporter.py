@@ -14,13 +14,13 @@ def chats_to_html(chats: list, filepath: str):
     chat_contents = ""
     chats_list = ""
     for chat in chats:
-        messages = "".join([_message_to_html(m) for m in chat.messages])
-        chat_contents += f"<div class='chat' data-chatid='{_esc(chat.key_remote_jid)}'>{messages}</div>"
-        preview = "None"
         if len(chat.messages) == 0:
             continue
-        if chat.messages[-1].data is not None:
-            preview = chat.messages[-1].data[0:55]
+        messages = "".join([_message_to_html(m) for m in chat.messages])
+        chat_contents += f"<div class='chat' data-chatid='{_esc(chat.key_remote_jid)}'>{messages}</div>"
+        preview = ""
+        if chat.messages[-1].get_content() is not None:
+            preview = chat.messages[-1].get_content()[0:55]
         chats_list += f"<div class='chat-partner'><a href='#{_esc(chat.key_remote_jid)}' title='{_esc(chat.phone_number)}'>" \
                       f"{_esc(chat.title)}<div class='chat-partner-subtitle'>{_esc(preview)}</div></a></div>"
     _save_to_html_file(chat_contents, chats_list, filepath)
