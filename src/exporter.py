@@ -28,15 +28,15 @@ def chats_to_html(chats: list, filepath: str):
 
 def _message_to_html(m: Message) -> str:
     if m.key_from_me:
-        direction_class = "sent"
+        direction_class = " sent"
     else:
         direction_class = ""
 
     if m.remote_resource:
-        return f"<div class='message {direction_class}'><div class='sender'>{_esc(m.get_sender_name())}</div>" \
+        return f"<div class='message{direction_class}'><div class='sender'>{_esc(m.get_sender_name())}</div>" \
                f"{_esc(m.get_content())}<div class='time'>{_esc(m.received_timestamp_str)}</div></div>"
     else:
-        return f"<div class='message {direction_class}'>{_esc(m.get_content())}" \
+        return f"<div class='message{direction_class}'>{_esc(m.get_content())}" \
                f"<div class='time'>{_esc(m.received_timestamp_str)}</div></div>"
 
 
