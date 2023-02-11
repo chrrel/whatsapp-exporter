@@ -6,7 +6,7 @@ from models import Message
 def chats_to_txt(chats: list, directory_path: str):
     for chat in chats:
         messages = "\n".join([str(message) for message in chat.messages])
-        with open(f"{directory_path}/{chat.key_remote_jid}.txt", "w") as file:
+        with open(f"{directory_path}/{chat.key_remote_jid}.txt", "w", encoding="utf-8") as file:
             file.write(chat.title + "\n" + messages)
 
 
@@ -28,15 +28,15 @@ def chats_to_html(chats: list, filepath: str):
 
 def _message_to_html(m: Message) -> str:
     if m.key_from_me:
-        direction_class = "sent"
+        direction_class = " sent"
     else:
         direction_class = ""
 
     if m.remote_resource:
-        return f"<div class='message {direction_class}'><div class='sender'>{_esc(m.get_sender_name())}</div>" \
+        return f"<div class='message{direction_class}'><div class='sender'>{_esc(m.get_sender_name())}</div>" \
                f"{_esc(m.get_content())}<div class='time'>{_esc(m.received_timestamp_str)}</div></div>"
     else:
-        return f"<div class='message {direction_class}'>{_esc(m.get_content())}" \
+        return f"<div class='message{direction_class}'>{_esc(m.get_content())}" \
                f"<div class='time'>{_esc(m.received_timestamp_str)}</div></div>"
 
 
