@@ -51,10 +51,10 @@ def _load_file_content(filepath: str) -> str:
 
 def _save_to_html_file(chat_contents: str, chats_list: str, filepath: str):
     # Use template as f-string and populate it with data
-    js_code = _load_file_content("res/main.js")
-    css_code = _load_file_content("res/styles.css")
+    js_code = _load_file_content("resources/main.js")
+    css_code = _load_file_content("resources/styles.css")
     # Avoid SyntaxError: f-string must not include a backslash
-    template = _load_file_content('res/template.html').replace("\n", "")
+    template = _load_file_content('resources/template.html').replace("\n", "")
     html_output = f"{template}".format(**locals())
 
     with open(filepath, "w", encoding="utf-8") as file:
