@@ -61,7 +61,7 @@ header h1 {
     background: #EAEAEA;
 }
 
-.chat-partner-subtitle {
+.chat-partner div {
     font-size: 12px;
     margin-top: 10px;
     color: #666666;

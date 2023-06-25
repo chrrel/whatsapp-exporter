@@ -18,12 +18,11 @@ class Message:
         return time.strftime('%d.%m.%Y %H:%M', time.localtime(ts))
 
     def get_content(self) -> str:
+        media_caption = self.media_caption if self.media_caption is not None else ""
+
         if self.media_wa_type == 0:
             return self.data
-        media_caption = self.media_caption
-        if self.media_caption is None:
-            media_caption = ""
-        if self.media_wa_type == 1:
+        elif self.media_wa_type == 1:
             return f"[IMAGE] {media_caption}"
         elif self.media_wa_type == 2:
             return f"[AUDIO] {media_caption}"
