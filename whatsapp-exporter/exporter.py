@@ -10,6 +10,7 @@ def chats_to_txt(chats: list, directory_path: str):
             file.write(chat.title + "\n" + messages)
 
 
+
 def chats_to_html(chats: list, filepath: str):
     chat_contents = ""
     chats_list = ""
@@ -18,19 +19,16 @@ def chats_to_html(chats: list, filepath: str):
             continue
         messages = "".join([_message_to_html(m) for m in chat.messages])
         chat_contents += f"<div class='chat' data-chatid='{_esc(chat.key_remote_jid)}'>{messages}</div>"
-        preview = ""
-        if chat.messages[-1].get_content() is not None:
-            preview = chat.messages[-1].get_content()[0:55]
+
+        last_message = chat.messages[-1].get_content()
+        preview = last_message[0:55] if last_message is not None else ""
         chats_list += f"<div class='chat-partner'><a href='#{_esc(chat.key_remote_jid)}' title='{_esc(chat.phone_number)}'>" \
                       f"{_esc(chat.title)}<div class='chat-partner-subtitle'>{_esc(preview)}</div></a></div>"
     _save_to_html_file(chat_contents, chats_list, filepath)
 
 
 def _message_to_html(m: Message) -> str:
-    if m.key_from_me:
-        direction_class = " sent"
-    else:
-        direction_class = ""
+    direction_class = " sent" if m.key_from_me else ""
 
     if m.remote_resource:
         return f"<div class='message{direction_class}'><div class='sender'>{_esc(m.get_sender_name())}</div>" \

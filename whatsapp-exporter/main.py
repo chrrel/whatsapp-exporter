@@ -31,7 +31,7 @@ def query_messages_from_table_message(con: Connection, key_remote_jid: str, cont
                 jid.raw_string,
                 m.from_me,
                 CASE
-                    WHEN mr.revoked_key_id > 1 THEN  '[Deleted]'
+                    WHEN mr.revoked_key_id > 1 THEN '[Deleted]'
                     ELSE m.text_data
                 END AS text,
                 m.message_type
