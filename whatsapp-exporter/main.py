@@ -10,15 +10,21 @@ from models import Message, Chat
 def query_messages_from_table_messages(con: Connection, key_remote_jid: str, contacts: Dict[str, Optional[str]]) -> List[Message]:
     cur = con.cursor()
     query = """
-            SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
+            SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude, longitude,
+            CASE
+                WHEN mm.file_path IS NOT NULL THEN mm.file_path
+                WHEN mm.media_name IS NOT NULL THEN mm.media_name
+                ELSE messages.media_name
+            END as media_path
             FROM messages 
+            LEFT JOIN message_media AS mm ON mm.message_row_id = messages._id
             WHERE key_remote_jid =:key_remote_jid
             ORDER BY max(receipt_server_timestamp, received_timestamp)"""
 
     messages = []
-    for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
+    for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude, longitude, media_path in cur.execute(query, {"key_remote_jid": key_remote_jid}):
         messages.append(
-            Message(received_timestamp, remote_resource, key_from_me, data, media_caption, int(media_wa_type), contacts.get(remote_resource, None))
+            Message(received_timestamp, remote_resource, key_from_me, data, media_caption, int(media_wa_type), latitude, longitude, media_path, contacts.get(remote_resource, None))
         )
     return messages
 
