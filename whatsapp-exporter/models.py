@@ -2,7 +2,8 @@ import time
 from urllib.parse import quote
 
 class Message:
-    def __init__(self, received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude, longitude, media_path, sender):
+    def __init__(self, received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude,
+                 longitude, media_path, sender):
         self.received_timestamp = received_timestamp
         self.remote_resource = remote_resource
         self.key_from_me = key_from_me
@@ -30,62 +31,39 @@ class Message:
 
 
     def get_media(self) -> str:
-        media_types = {
-            0: {
-                "type": "Text",
-                "value": ""
-            },
-            1: {
-                "type": "Image",
-                "value": f"""<a href="{self.media_path}" target="_blank"><img src="{self.media_path}" loading="lazy"></a>"""
-            },
-            2: {
-                "type": "Audio",
-                "value": f"""<a href="{self.media_path}" target="_blank"><audio controls preload="none"><source src="{self.media_path}"></source></audio></a>"""
-            },
-            3: {
-                "type": "Video",
-                "value": f"""<a href="{self.media_path}" target="_blank"><video controls preload="none"><source src="{self.media_path}"</source></video></a>"""
-            },
-            4: {
-                "type": "Contact",
-                "value": f"""[Contact] {self.media_path} (<a download="{self.media_path}.vcf" href="data:application/octet-stream,{quote(str(self.data))}">Download)</a>"""
-            },
-            5: {
-                "type": "Location",
-                "value": f"""[Location] {self.latitude}, {self.longitude} (<a target="_blank" href="http://www.openstreetmap.org/?mlat={self.latitude}&mlon={self.longitude}&zoom=16">{self.media_path if self.media_path else "Link"}</a>)"""
-            },
-            7: {
-                "type": "System Message",
-                "value": f"[System Message] {self.media_path}"
-            },
-            9: {
-                "type": "Document",
-                "value": f"""<a href="{self.media_path}" target="_blank">{self.media_path}</a>"""
-            },
-            13: {
-                "type": "Animated GIF",
-                "value": f"""<a href="{self.media_path}" target="_blank"><video controls preload="none"><source src="{self.media_path}"</source></video></a>"""
-            },
-            16: {
-                "type": "Live Location",
-                "value": f"[Live Location] {self.media_path}"
-            },
-            20: {
-                "type": "Sticker",
-                "value": f"""<a href="{self.media_path}" target="_blank"><img src="{self.media_path}" loading=\"lazy\"></a>"""
-            }
-        }
-
+        """
+        Retrieve a message's media attachments which can have the following types:
+        0: "Text", 1: "Image", 2: "Audio", 3: "Video", 4: "Contact", 5: "Location", 7: "System Message", 9: "Document",
+        10: "Missed Call", 13: "Animated GIF", 14: "Multiple contacts", 15: "Deleted",16: "Live Location", 20: "Sticker"
+        """
         if self.media_wa_type == 0:
             media = ""
-        elif self.media_wa_type in media_types:
-            if self.media_path:
-                media = media_types[self.media_wa_type]["value"]
-            elif self.latitude and self.longitude:
-                media = media_types[self.media_wa_type]["value"]
-            else:
-                media = f"""[{media_types[self.media_wa_type]["type"]} not found]"""
+        elif self.media_wa_type == 1:
+            media = f"""<a href="{self.media_path}" target="_blank"><img src="{self.media_path}" loading="lazy"></a>"""
+        elif self.media_wa_type == 2:
+            media = f"""<a href="{self.media_path}" target="_blank"><audio controls preload="none"><source src="{self.media_path}"></source></audio></a>"""
+        elif self.media_wa_type == 3:
+            media = f"""<a href="{self.media_path}" target="_blank"><video controls preload="none"><source src="{self.media_path}"</source></video></a>"""
+        elif self.media_wa_type == 4:
+            media = f"""[Contact] {self.media_path} (<a download="{self.media_path}.vcf" href="data:application/octet-stream,{quote(str(self.data))}">Download)</a>"""
+        elif self.media_wa_type == 5:
+            media = f"""[Location] {self.latitude}, {self.longitude} (<a target="_blank" href="http://www.openstreetmap.org/?mlat={self.latitude}&mlon={self.longitude}&zoom=16">{self.media_path if self.media_path else "Link"}</a>)"""
+        elif self.media_wa_type == 7:
+            media = f"[System Message] {self.media_path}"
+        elif self.media_wa_type == 9:
+            media = f"""<a href="{self.media_path}" target="_blank">{self.media_path}</a>"""
+        elif self.media_wa_type == 10:
+            media = f"""[Missed Call] </a>"""
+        elif self.media_wa_type == 13:
+            media = f"""<a href="{self.media_path}" target="_blank"><video controls preload="none"><source src="{self.media_path}"</source></video></a>"""
+        elif self.media_wa_type == 14:
+            media = f"""[Multiple Contacts] {self.media_path}"""
+        elif self.media_wa_type == 15:
+            media = f"""[Deleted]"""
+        elif self.media_wa_type == 16:
+            media = f"""[Live Location] {self.latitude}, {self.longitude} (<a target="_blank" href="http://www.openstreetmap.org/?mlat={self.latitude}&mlon={self.longitude}&zoom=16">{self.media_path if self.media_path else "Link"}</a>)"""
+        elif self.media_wa_type == 20:
+            media = f"""<a href="{self.media_path}" target="_blank"><img src="{self.media_path}" loading="lazy"></a>"""
         else:
             media = f"[Unknown medium] {self.media_path}"
 
@@ -100,9 +78,9 @@ class Message:
 
     def __str__(self):
         if self.key_from_me:
-            return f"> {self.received_timestamp_str} - {self.get_content()}"
+            return f"> {self.received_timestamp_str} - {self.get_content()} {self.get_media()}"
         else:
-            return f"< {self.received_timestamp_str} - {self.get_content()}"
+            return f"< {self.received_timestamp_str} - {self.get_content()} {self.get_media()}"
 
 
 class Chat:
