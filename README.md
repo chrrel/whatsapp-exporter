@@ -13,11 +13,9 @@ A python script for extracting WhatsApp conversations from the app's SQLite data
 1. Prerequisite: The Whatsapp database files must be available (see the following section).
 2. Supply all configuration values in `config.cfg`. Here, the paths to the database files must be given. The `wa.db` 
    database is only needed for adding names of contacts and does not need to be used.
-3. Run the main script.
-
-```shell
-python3 main.py
-```
+3. Run the main script: `python3 main.py`.
+4. Open then generated HTML page (configured via `html_output_path`) with a web browser. To view media files, simply 
+   place WhatsApp's `Media` directory to the same directory as the HTML page.
 
 ## Retrieving WhatsApp Databases
 
