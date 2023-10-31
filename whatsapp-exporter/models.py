@@ -34,7 +34,8 @@ class Message:
         """
         Retrieve a message's media attachments which can have the following types:
         0: "Text", 1: "Image", 2: "Audio", 3: "Video", 4: "Contact", 5: "Location", 7: "System Message", 9: "Document",
-        10: "Missed Call", 13: "Animated GIF", 14: "Multiple contacts", 15: "Deleted",16: "Live Location", 20: "Sticker"
+        10: "Missed Call", 13: "Animated GIF", 14: "Multiple contacts", 15: "Deleted", 16: "Live Location",
+        20: "Sticker", 42: "View Once"
         """
         if self.media_wa_type == 0:
             media = ""
@@ -64,6 +65,8 @@ class Message:
             media = f"""[Live Location] {self.latitude}, {self.longitude} (<a target="_blank" href="http://www.openstreetmap.org/?mlat={self.latitude}&mlon={self.longitude}&zoom=16">{self.media_path if self.media_path else "Link"}</a>)"""
         elif self.media_wa_type == 20:
             media = f"""<a href="{self.media_path}" target="_blank"><img src="{self.media_path}" loading="lazy"></a>"""
+        elif self.media_wa_type == 42:
+            media = f"""[View Once] {self.media_path} """
         else:
             media = f"[Unknown medium] {self.media_path}"
 
