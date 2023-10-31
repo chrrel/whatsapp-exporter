@@ -55,7 +55,7 @@ def query_messages_from_table_message(con: Connection, key_remote_jid: str, cont
             LEFT JOIN message_media AS mm ON m._id = mm.message_row_id
             LEFT JOIN message_location ON m._id = message_location.message_row_id
             WHERE cv.raw_string_jid =:key_remote_jid
-            ORDER BY max(receipt_server_timestamp, received_timestamp)
+            ORDER BY m.timestamp
             """
     messages = []
     for timestamp, remote_jid, from_me, data, message_type, latitude, longitude, media_path in cur.execute(query, {"key_remote_jid": key_remote_jid}):
