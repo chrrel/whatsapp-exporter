@@ -43,7 +43,7 @@ def chats_to_html(chats: list, filepath: str):
 def _message_to_html(m: Message) -> str:
     direction_class = " sent" if m.key_from_me else ""
     sender = _esc(m.get_sender_name())
-    content = _esc(m.get_content())
+    content = m.get_media() + _esc(m.get_content())
     time = _esc(m.received_timestamp_str)
 
     if m.remote_resource:

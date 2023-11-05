@@ -9,7 +9,7 @@ window.onload = function(event) {
     let firstChatPartnerLink = document.querySelectorAll("a")[0];
     displayActiveChat(firstChat, firstChatPartnerLink);
 
-    links = document.querySelectorAll("a").forEach(function(link){
+    links = document.querySelectorAll(".chat-partner a").forEach(function(link){
         link.addEventListener("click", function(event) {
             event.preventDefault();
             document.querySelector(".active-chat").classList.remove("active-chat");

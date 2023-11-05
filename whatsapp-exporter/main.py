@@ -10,15 +10,21 @@ from models import Message, Chat
 def query_messages_from_table_messages(con: Connection, key_remote_jid: str, contacts: Dict[str, Optional[str]]) -> List[Message]:
     cur = con.cursor()
     query = """
-            SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type 
+            SELECT received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude, longitude,
+            CASE
+                WHEN mm.file_path IS NOT NULL THEN mm.file_path
+                WHEN mm.media_name IS NOT NULL THEN mm.media_name
+                ELSE messages.media_name
+            END as media_path
             FROM messages 
+            LEFT JOIN message_media AS mm ON mm.message_row_id = messages._id
             WHERE key_remote_jid =:key_remote_jid
             ORDER BY max(receipt_server_timestamp, received_timestamp)"""
 
     messages = []
-    for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
+    for received_timestamp, remote_resource, key_from_me, data, media_caption, media_wa_type, latitude, longitude, media_path in cur.execute(query, {"key_remote_jid": key_remote_jid}):
         messages.append(
-            Message(received_timestamp, remote_resource, key_from_me, data, media_caption, int(media_wa_type), contacts.get(remote_resource, None))
+            Message(received_timestamp, remote_resource, key_from_me, data, media_caption, int(media_wa_type), latitude, longitude, media_path, contacts.get(remote_resource, None))
         )
     return messages
 
@@ -34,18 +40,27 @@ def query_messages_from_table_message(con: Connection, key_remote_jid: str, cont
                     WHEN mr.revoked_key_id > 1 THEN '[Deleted]'
                     ELSE m.text_data
                 END AS text,
-                m.message_type
+                m.message_type,
+                message_location.latitude,
+                message_location.longitude,
+                CASE
+                    WHEN mm.file_path IS NOT NULL THEN mm.file_path
+                    WHEN mm.media_name IS NOT NULL THEN mm.media_name
+                    ELSE ""
+                END as media_path
             FROM message AS m
             LEFT JOIN chat_view AS cv ON m.chat_row_id = cv._id
             LEFT JOIN jid ON m.sender_jid_row_id = jid._id
             LEFT JOIN message_revoked AS mr ON m._id = mr.message_row_id
+            LEFT JOIN message_media AS mm ON m._id = mm.message_row_id
+            LEFT JOIN message_location ON m._id = message_location.message_row_id
             WHERE cv.raw_string_jid =:key_remote_jid
-            ORDER BY max(receipt_server_timestamp, received_timestamp)
+            ORDER BY m.timestamp
             """
     messages = []
-    for timestamp, remote_jid, from_me, data, message_type in cur.execute(query, {"key_remote_jid": key_remote_jid}):
+    for timestamp, remote_jid, from_me, data, message_type, latitude, longitude, media_path in cur.execute(query, {"key_remote_jid": key_remote_jid}):
         messages.append(
-            Message(timestamp, remote_jid, from_me, data, data, message_type, contacts.get(remote_jid, None))
+            Message(timestamp, remote_jid, from_me, data, data, message_type, latitude, longitude, media_path, contacts.get(remote_jid, None))
         )
     return messages
 
