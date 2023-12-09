@@ -20,9 +20,10 @@ def chats_to_html(chats: list, filepath: str):
             continue
 
         # Add the chat contents to the HTML
-        t = Template("""<div class="chat" data-chatid="$chat_id">$messages</div>""")
+        t = Template("""<div class="chat" data-chatid="$chat_id" data-chat-title="$title">$messages</div>""")
         chat_contents += t.substitute(
             chat_id=_esc(chat.key_remote_jid),
+            title=_esc(chat.title),
             messages="".join([_message_to_html(m) for m in chat.messages])
         )
 

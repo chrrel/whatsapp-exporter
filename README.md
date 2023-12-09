@@ -17,6 +17,17 @@ A python script for extracting WhatsApp conversations from the app's SQLite data
 4. Open then generated HTML page (configured via `html_output_path`) with a web browser. To view media files, simply 
    place WhatsApp's `Media` directory to the same directory as the HTML page.
 
+In order to export only certain chats (or to include further filtering requirements), the SQL queries in `main.py` 
+can be modified directly.
+
+```SQL
+# New database format: Modify query_messages_from_table_message to filter for the chat with phone number 12345678
+WHERE cv.raw_string_jid =:key_remote_jid and cv.raw_string_jid = '12345678@s.whatsapp.net'
+
+# Old database format: Modify query_messages_from_table_messages to filter for the chat with phone number 12345678
+WHERE key_remote_jid =:key_remote_jid and key_remote_jid = '12345678@s.whatsapp.net'
+```  
+
 ## Retrieving WhatsApp Databases
 
 For retrieving the WhatsApp database files from an Android device there are several options. Two of them are described in this section.

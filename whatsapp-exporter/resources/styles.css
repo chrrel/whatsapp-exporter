@@ -124,3 +124,31 @@ header h1 {
     width: auto;
     max-height: 400px;
 }
+
+/* Print styles */
+@media print {
+    main {
+        width: 100%;
+        box-shadow: none;
+        display: block;
+        border: none;
+    }
+
+    div.chat {
+        overflow: visible;
+        display: flex;
+    }
+
+    div.chat::before {
+        content: attr(data-chat-title) ' (' attr(data-chatid) ')';
+        font-size: 1.2rem;
+    }
+
+    .chats-list {
+        display: none;
+    }
+
+    .message {
+        border: 1px solid #D8D8D8;
+    }
+}
