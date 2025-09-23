@@ -29,7 +29,7 @@ def chats_to_html(chats: list, filepath: str):
 
         # Add a row to the list of chats
         t = Template("""<div class="chat-partner"><a href="#$id" title="$phone_number">$title<div>$preview</div></a></div>""")
-        last_message = chat.messages[-1].get_content()
+        last_message = chat.messages[-1].content
         preview = last_message[0:55] if last_message is not None else ""
         chats_list += t.substitute(
             id=_esc(chat.key_remote_jid),
@@ -43,9 +43,9 @@ def chats_to_html(chats: list, filepath: str):
 
 def _message_to_html(m: Message) -> str:
     direction_class = " sent" if m.key_from_me else ""
-    sender = _esc(m.get_sender_name())
-    content = m.get_media() + _esc(m.get_content())
-    time = _esc(m.received_timestamp_str)
+    sender = _esc(m.sender_name)
+    content = m.get_media() + _esc(m.content)
+    time = _esc(m.received_timestamp)
 
     if m.remote_resource:
         t = Template("""<div class="message$direction_class"><div class="sender">$sender</div>$content<div class="time">$time</div></div>""")
