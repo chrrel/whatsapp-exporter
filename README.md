@@ -2,8 +2,6 @@
 
 A python script for extracting WhatsApp conversations from the app's SQLite database and exporting them as HTML or txt files.
 
-![Screenshot](screenshot.png)
-
 ## Features
 * Export WhatsApp chats to a WhatsApp Web like HTML page.
 * Export WhatsApp chats to txt files (one per chat).
