@@ -54,7 +54,7 @@ def query_messages_from_table_message(con: Connection, key_remote_jid: str, cont
             LEFT JOIN message_revoked AS mr ON m._id = mr.message_row_id
             LEFT JOIN message_media AS mm ON m._id = mm.message_row_id
             LEFT JOIN message_location ON m._id = message_location.message_row_id
-            WHERE cv.raw_string_jid =:key_remote_jid
+            WHERE cv.original_jid_row_id =:key_remote_jid
             ORDER BY m.timestamp
             """
     messages = []
@@ -71,20 +71,32 @@ def query_all_chats(db_path: str, contacts: Dict[str, Optional[str]]) -> List[Ch
     cur = con.cursor()
 
     # Check which table to use: Older databases use the table "messages", newer ones the table "message"
-    cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='messages'")
+    # cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='messages'")
+    cur.execute("SELECT name FROM sqlite_sequence WHERE name='messages'")
     table_messages_exists = cur.fetchone() is not None
     print("[+] Using table 'messages'") if table_messages_exists else print("[+] Using table 'message'")
 
-    query = "SELECT raw_string_jid as key_remote_jid, subject, sort_timestamp FROM chat_view WHERE sort_timestamp IS NOT NULL ORDER BY sort_timestamp DESC"
-    for key_remote_jid, subject, sort_timestamp in cur.execute(query):
+    # query = "SELECT raw_string_jid as key_remote_jid, subject, sort_timestamp FROM chat_view WHERE sort_timestamp IS NOT NULL ORDER BY sort_timestamp DESC"
+    query = """
+    SELECT jid._id as key_remote_jid,
+    jid.raw_string,
+    cv.subject,
+    cv.sort_timestamp
+    FROM chat_view as cv
+    JOIN jid on jid._id = cv.original_jid_row_id
+    WHERE cv.sort_timestamp IS NOT NULL
+    ORDER BY cv.sort_timestamp DESC
+    """
+    for key_remote_jid, raw_string, subject, sort_timestamp in cur.execute(query):
         if table_messages_exists:
             messages = query_messages_from_table_messages(con, key_remote_jid, contacts)
         else:
             messages = query_messages_from_table_message(con, key_remote_jid, contacts)
 
         chats.append(
-            Chat(key_remote_jid, subject, sort_timestamp, contacts.get(key_remote_jid, None), messages)
+            Chat(key_remote_jid, subject, sort_timestamp, contacts.get(raw_string, None), messages)
         )
+        print(raw_string, contacts.get(raw_string, None))
     con.close()
     return chats
 
