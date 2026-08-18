@@ -79,7 +79,7 @@ class Chat:
     messages: field(default_factory=list)
 
     def __post_init__(self):
-        self.phone_number = self.key_remote_jid.split("@")[0]
+        self.phone_number = str((self.name or self.key_remote_jid)).split("@")[0]
         self.title = self.subject or self.name or self.phone_number
 
     def __str__(self):

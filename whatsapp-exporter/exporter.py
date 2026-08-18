@@ -1,13 +1,21 @@
 import html
 from string import Template
+import os
 
 from models import Message
 
 
 def chats_to_txt(chats: list, directory_path: str):
+    os.makedirs(directory_path, exist_ok=True)
     for chat in chats:
+        # Create a sanitized filename from the chat title (supports non-ASCII)
+        safe_title = chat.title.encode('ascii', 'ignore').decode('ascii', 'ignore')
+        safe_filename = "".join([c if c.isalnum() or c in (' ', '-', '_') else '_' for c in safe_title]).strip()
+        if not safe_filename:
+            safe_filename = chat.key_remote_jid
+        
         messages = "\n".join([str(message) for message in chat.messages])
-        with open(f"{directory_path}/{chat.key_remote_jid}.txt", "w", encoding="utf-8") as file:
+        with open(f"{directory_path}/{safe_filename}.txt", "w", encoding="utf-8") as file:
             file.write(chat.title + "\n" + messages)
 
 
